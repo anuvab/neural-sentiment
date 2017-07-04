@@ -20,11 +20,11 @@ def main():
     lengths = []
     count = 0
     for d in dirs:
-        print "Grabbing sequence lengths from: {0}".format(d)
+        print("Grabbing sequence lengths from: {0}".format(d))
         for f in os.listdir(d):
             count += 1
             if count % 100 == 0:
-                print "Determining length of: {0}".format(f)
+                print("Determining length of: {0}".format(f))
             with open(os.path.join(d, f), 'r') as review:
                 tokens = tokenize(review.read().lower())
                 numTokens = len(tokens)
@@ -57,8 +57,8 @@ def setGraphParameters():
                 \tglobal {0}\n\
                 \t{0} = {1}(sys.argv[sys.argv.index({0}) + 1])".format(arg[0], arg[1]))
     except Exception as a:
-        print "Problem with cmd args " + a
-        print x
+        print("Problem with cmd args " + a)
+        print(x)
 
 '''
 This function tokenizes sentences

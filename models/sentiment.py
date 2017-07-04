@@ -111,7 +111,7 @@ class SentimentModel(object):
 			clipped_gradients, norm = tf.clip_by_global_norm(gradients, self.max_gradient_norm)
 			with tf.name_scope("grad_norms") as scope:
 				grad_summ = tf.summary.scalar("grad_norms", norm)
-			self.update = opt.apply_gradients(zip(clipped_gradients, params), global_step=self.global_step)
+			self.update = opt.apply_gradients(list(zip(clipped_gradients, params)), global_step=self.global_step)
 			loss_summ = tf.summary.scalar("{0}_loss".format(self.str_summary_type), self.mean_loss)
 			acc_summ = tf.summary.scalar("{0}_accuracy".format(self.str_summary_type), self.accuracy)
 			self.merged = tf.summary.merge_all()
@@ -182,7 +182,7 @@ class SentimentModel(object):
 		self.train_targets = np.split(self.train_targets, num_train_batches)
 		self.train_data = np.split(self.train_data, num_train_batches)
 
-		print "Test size is: {0}, splitting into {1} batches".format(len(self.test_data), num_test_batches)
+		print("Test size is: {0}, splitting into {1} batches".format(len(self.test_data), num_test_batches))
 		self.test_data = np.split(self.test_data, num_test_batches)
 		self.test_targets = onehot[test_start_end_index[0]:test_start_end_index[1]][:test_cutoff]
 		self.test_targets = np.split(self.test_targets, num_test_batches)

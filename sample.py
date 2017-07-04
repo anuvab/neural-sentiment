@@ -17,7 +17,7 @@ from six.moves import xrange
 import util.dataprocessor
 import models.sentiment
 import util.vocabmapping
-import ConfigParser
+import configparser
 import pickle
 
 flags = tf.app.flags
@@ -47,7 +47,7 @@ def main():
 			outputs = sess.run(output_feed, input_feed)
 			score = np.argmax(outputs[0])
 			probability = outputs[0].max(axis=1)[0]
-			print "Value of sentiment: {0} with probability: {1}".format(score , probability)
+			print("Value of sentiment: {0} with probability: {1}".format(score , probability))
 
 def prepare_text(text, max_seq_length, vocab_mapping):
 	'''
@@ -87,11 +87,11 @@ def loadModel(session, vocab_size):
 	float(hParams[6]),float(hParams[7]) ,True)
 	ckpt = tf.train.get_checkpoint_state(FLAGS.checkpoint_dir)
 	if ckpt and gfile.Exists(ckpt.model_checkpoint_path):
-		print "Reading model parameters from {0}".format(ckpt.model_checkpoint_path)
+		print("Reading model parameters from {0}".format(ckpt.model_checkpoint_path))
 		model.saver.restore(session, ckpt.model_checkpoint_path)
 	else:
-		print "Double check you got the checkpoint_dir right..."
-		print "Model not found..."
+		print("Double check you got the checkpoint_dir right...")
+		print("Model not found...")
 		model = None
 	return model
 
@@ -112,11 +112,11 @@ def load_model(session, vocab_size):
 											forward_only=True)
 	ckpt = tf.train.get_checkpoint_state(FLAGS.checkpoint_dir)
 	if ckpt and gfile.Exists(ckpt.model_checkpoint_path):
-		print "Reading model parameters from {0}".format(ckpt.model_checkpoint_path)
+		print("Reading model parameters from {0}".format(ckpt.model_checkpoint_path))
 		model.saver.restore(session, ckpt.model_checkpoint_path)
 	else:
-		print "Double check you got the checkpoint_dir right..."
-		print "Model not found..."
+		print("Double check you got the checkpoint_dir right...")
+		print("Model not found...")
 		model = None
 	return model
 
@@ -124,7 +124,7 @@ def read_config_file():
 	'''
 	Reads in config file, returns dictionary of network params
 	'''
-	config = ConfigParser.ConfigParser()
+	config = configparser.ConfigParser()
 	config.read(FLAGS.config_file)
 	dic = {}
 	sentiment_section = "sentiment_network_params"

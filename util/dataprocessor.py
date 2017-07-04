@@ -3,7 +3,7 @@ import os
 import nltk
 import csv
 import pickle
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import numpy as np
 from multiprocessing import Process, Lock
 dirs = ["data/aclImdb/test/pos", "data/aclImdb/test/neg", "data/aclImdb/train/pos", "data/aclImdb/train/neg"]
@@ -16,30 +16,30 @@ def run(max_seq_length, max_vocab_size):
     if not os.path.exists("data/checkpoints/"):
         os.makedirs("data/checkpoints")
     if not os.path.isdir("data/aclImdb"):
-        print "Data not found, downloading dataset..."
+        print("Data not found, downloading dataset...")
         fileName = downloadFile(url)
         import tarfile
         tfile = tarfile.open(fileName, 'r:gz')
-        print "Extracting dataset..."
+        print("Extracting dataset...")
         tfile.extractall('data/')
         tfile.close()
     if os.path.exists("data/vocab.txt"):
-        print "vocab mapping found..."
+        print("vocab mapping found...")
     else:
-        print "no vocab mapping found, running preprocessor..."
+        print("no vocab mapping found, running preprocessor...")
         createVocab(dirs, max_vocab_size)
     if not os.path.exists("data/processed"):
         os.makedirs("data/processed/")
-        print "No processed data file found, running preprocessor..."
+        print("No processed data file found, running preprocessor...")
     else:
         return
-    import vocabmapping
+    from . import vocabmapping
     vocab = vocabmapping.VocabMapping()
     dirCount = 0
     processes = []
     lock = Lock()
     for d in dirs:
-        print "Procesing data with process: " + str(dirCount)
+        print("Procesing data with process: " + str(dirCount))
         p = Process(target=createProcessedDataFile, args=(vocab, d, dirCount, max_seq_length, lock))
         p.start()
         processes.append(p)
@@ -61,7 +61,7 @@ def createProcessedDataFile(vocab_mapping, directory, pid, max_seq_length, lock)
         count += 1
         if count % 100 == 0:
             lock.acquire()
-            print "Processing: " + f + " the " + str(count) + "th file... on process: " + str(pid)
+            print("Processing: " + f + " the " + str(count) + "th file... on process: " + str(pid))
             lock.release()
         with open(os.path.join(directory, f), 'r') as review:
             tokens = tokenize(review.read().lower())
@@ -84,7 +84,7 @@ def createProcessedDataFile(vocab_mapping, directory, pid, max_seq_length, lock)
     #remove first placeholder value
     data = data[1::]
     lock.acquire()
-    print "Saving data file{0} to disk...".format(str(pid))
+    print("Saving data file{0} to disk...".format(str(pid)))
     lock.release()
     saveData(data, pid)
 
@@ -93,11 +93,11 @@ def createProcessedDataFile(vocab_mapping, directory, pid, max_seq_length, lock)
 #http://stackoverflow.com/questions/22676/how-do-i-download-a-file-over-http-using-python
 def downloadFile(url):
     file_name = os.path.join("data/", url.split('/')[-1])
-    u = urllib2.urlopen(url)
+    u = urllib.request.urlopen(url)
     f = open(file_name, 'wb')
     meta = u.info()
     file_size = int(meta.getheaders("Content-Length")[0])
-    print "Downloading: %s Bytes: %s" % (file_name, file_size)
+    print("Downloading: %s Bytes: %s" % (file_name, file_size))
     file_size_dl = 0
     block_sz = 8192
     while True:
@@ -108,7 +108,7 @@ def downloadFile(url):
         f.write(buffer)
         status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
         status = status + chr(8)*(len(status)+1)
-        print status,
+        print(status, end=' ')
     f.close()
     return file_name
 
@@ -138,14 +138,14 @@ Saves processed data numpy array
 def saveData(npArray, index):
     name = "data{0}.npy".format(str(index))
     outfile = os.path.join("data/processed/", name)
-    print "numpy array is: {0}x{1}".format(len(npArray), len(npArray[0]))
+    print("numpy array is: {0}x{1}".format(len(npArray), len(npArray[0])))
     np.save(outfile, npArray)
 
 '''
 create vocab mapping file
 '''
 def createVocab(dirs, max_vocab_size):
-    print "Creating vocab mapping..."
+    print("Creating vocab mapping...")
     dic = {}
     for d in dirs:
         indices = []
