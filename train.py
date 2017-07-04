@@ -181,7 +181,7 @@ def check_get_hyper_param_dic():
 					new_checkpoint_dir)
 				os.makedirs(new_checkpoint_dir)
 				FLAGS.checkpoint_dir = new_checkpoint_dir
- 				serializer = hyperparams.HyperParameterHandler(FLAGS.checkpoint_dir)
+				serializer = hyperparams.HyperParameterHandler(FLAGS.checkpoint_dir)
 				serializer.saveParams(hyper_params)
 		else:
 			print("No hyper parameter changed detected, using old checkpoint...")
